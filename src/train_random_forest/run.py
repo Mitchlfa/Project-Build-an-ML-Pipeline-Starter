@@ -23,6 +23,7 @@ import wandb
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.preprocessing import OneHotEncoder
 
 
 def delta_date_feature(dates):
@@ -73,7 +74,7 @@ def go(args):
 
     ######################################
     # Fit the pipeline sk_pipe by calling the .fit method on X_train and y_train
-    # YOUR CODE HERE
+    sk_pipe.fit(X_train, y_train)
     ######################################
 
     # Compute r2 and MAE
@@ -88,20 +89,23 @@ def go(args):
 
     logger.info("Exporting model")
 
+    # Ensure all columns in X_val have consistent types
+    for col in X_val.select_dtypes(include=["object"]).columns:
+        X_val[col] = X_val[col].astype(str)  # Convert object columns to string
+
+    # Log data types for debugging
+    logger.info(f"Column data types in X_val:\n{X_val.dtypes}")
+
     # Save model package in the MLFlow sklearn format
     if os.path.exists("random_forest_dir"):
         shutil.rmtree("random_forest_dir")
 
-    ######################################
-    # Save the sk_pipe pipeline as a mlflow.sklearn model in the directory "random_forest_dir"
-    # HINT: use mlflow.sklearn.save_model
-    signature = mlflow.models.infer_signature(X_val, y_pred)
+    # Save the sk_pipe pipeline as a mlflow.sklearn model
     mlflow.sklearn.save_model(
-        # YOUR CODE HERE
-        signature = signature,
-        input_example = X_train.iloc[:5]
+        sk_pipe,
+        "random_forest_dir",
+        input_example=X_train.iloc[:5]  # Example of expected input
     )
-    ######################################
 
 
     # Upload the model we just exported to W&B
@@ -121,7 +125,7 @@ def go(args):
     # Here we save variable r_squared under the "r2" key
     run.summary['r2'] = r_squared
     # Now save the variable mae under the key "mae".
-    # YOUR CODE HERE
+    run.summary['mae'] = mae
     ######################################
 
     # Upload to W&B the feture importance visualization
@@ -164,7 +168,8 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     # 1 - A SimpleImputer(strategy="most_frequent") to impute missing values
     # 2 - A OneHotEncoder() step to encode the variable
     non_ordinal_categorical_preproc = make_pipeline(
-        # YOUR CODE HERE
+        SimpleImputer(strategy="most_frequent"),
+        OneHotEncoder()
     )
     ######################################
 
@@ -227,7 +232,8 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
 
     sk_pipe = Pipeline(
         steps =[
-        # YOUR CODE HERE
+        ("preprocessor", preprocessor),
+        ("random_forest", random_forest),
         ]
     )
 
