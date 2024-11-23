@@ -26,11 +26,11 @@ def go(args):
     # particular version of the artifact
     model_local_path = run.use_artifact(args.mlflow_model).download()
 
-    # Download test dataset
-    test_dataset_path = run.use_artifact(args.test_dataset).file()
+    # Download test dataset (renaming to match "test_artifact")
+    test_artifact_path = run.use_artifact(args.test_artifact).file()  # Corrected
 
     # Read test dataset
-    X_test = pd.read_csv(test_dataset_path)
+    X_test = pd.read_csv(test_artifact_path)  # Corrected
     y_test = X_test.pop("price")
 
     logger.info("Loading model and performing inference on test set")
@@ -62,9 +62,9 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--test_dataset",
+        "--test_artifact",  # Corrected argument name
         type=str, 
-        help="Test dataset",
+        help="Test dataset artifact",  # Corrected description
         required=True
     )
 

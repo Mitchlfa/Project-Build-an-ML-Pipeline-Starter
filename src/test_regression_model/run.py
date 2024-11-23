@@ -24,10 +24,10 @@ def go(args):
     logger.info("Downloading artifacts")
     # Download input artifact. This will also log that this script is using this
     # particular version of the artifact
-    model_local_path = run.use_artifact(args.mlflow_model).download()
+    model_local_path = run.use_artifact("mitchellfarnsworth-western-governors-university/nyc_airbnb/random_forest_export:prod").download()
 
     # Download test dataset
-    test_artifact_path = run.use_artifact(args.test_artifact).file()
+    test_artifact_path = run.use_artifact("mitchellfarnsworth-western-governors-university/nyc_airbnb/test_data.csv:latest").file()
 
     # Read test dataset
     X_test = pd.read_csv(test_artifact_path)
