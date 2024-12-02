@@ -179,3 +179,11 @@ Please, make sure all steps are using **the same** python version and that you h
 ## License
 
 [License](LICENSE.txt)
+
+## Project Links
+## WandDB link
+- [Weights and Biases Project](https://wandb.ai/mitchellfarnsworth-western-governors-university/nyc_airbnb?nw=nwusermitchellfarnsworth)
+
+## GitHub Repository
+
+- [Project GitHub Repository](https://github.com/Mitchlfa/Project-Build-an-ML-Pipeline-Starter)
