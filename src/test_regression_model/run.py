@@ -24,13 +24,13 @@ def go(args):
     logger.info("Downloading artifacts")
     # Download input artifact. This will also log that this script is using this
     # particular version of the artifact
-    model_local_path = run.use_artifact("mitchellfarnsworth-western-governors-university/nyc_airbnb/random_forest_export:prod").download()
+    model_local_path = run.use_artifact(args.mlflow_model).download()
 
     # Download test dataset
-    test_artifact_path = run.use_artifact("mitchellfarnsworth-western-governors-university/nyc_airbnb/test_data.csv:latest").file()
+    test_dataset_path = run.use_artifact(args.test_dataset).file()
 
     # Read test dataset
-    X_test = pd.read_csv(test_artifact_path)
+    X_test = pd.read_csv(test_dataset_path)
     y_test = X_test.pop("price")
 
     logger.info("Loading model and performing inference on test set")
@@ -62,12 +62,12 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--test_artifact",
+        "--test_dataset",
         type=str, 
-        help="Test dataset artifact",
+        help="Test dataset",
         required=True
     )
 
     args = parser.parse_args()
 
-    go(args)
+    go(args) 

@@ -119,15 +119,19 @@ def go(config: DictConfig):
                 },
             )
             
+
         if "test_regression_model" in active_steps:
+
             _ = mlflow.run(
-                os.path.join(hydra.utils.get_original_cwd(), "src", "test_regression_model"),
-                "main",
-                parameters={
-                    "mlflow_model": "random_forest_export:prod",  # Use the promoted model
-                    "test_artifact": "test_data.csv:latest",      # Latest test dataset
-                },
+                f"{config['main']['components_repository']}/test_regression_model",
+                'main',
+                parameters = {
+                    "mlflow_model":"random_forest_export:prod",
+                    "test_dataset":"test_data.csv:latest"
+                }
             )
+
+            pass
 
 
 
